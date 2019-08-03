@@ -9,6 +9,23 @@
             margin-left: 250px;
         }
 
+        #legend {
+            position: absolute;
+            width: 270px;
+            left: 985px;
+            top: 100px;
+            border: 1px;
+            border-color: black;
+            border-style: solid;
+        }
+
+        .legendMarker {
+            width: 10px;
+            height: 10px;
+            float: left;
+            margin: 4px;
+        }
+
         .top5line {
           fill: none;
           stroke: black;
@@ -75,6 +92,28 @@
         </div>
         <div id="tooltip"></div>
         <div id="yearInfo"></div>
+        <div id="legend">
+            <div>
+                <div class="legendMarker" style="background-color: black"></div>
+                <span>Top 5% Wealthiest Americans</span>
+            </div>
+            <div>
+                <div class="legendMarker" style="background-color: blue"></div>
+                <span>Top 25% Wealthiest Americans</span>
+            </div>
+            <div>
+                <div class="legendMarker" style="background-color: green"></div>
+                <span>Top 50-25% Wealthiest Americans</span>
+            </div>
+            <div>
+                <div class="legendMarker" style="background-color: orange"></div>
+                <span>Bottom 50-25% Wealthiest Americans</span>
+            </div>
+            <div>
+                <div class="legendMarker" style="background-color: red"></div>
+                <span>Bottom 25% Wealthiest Americans</span>
+            </div>
+        </div>
         <script>
             var highlightYears = {
                 1969: "Richard Nixon becomes president",
