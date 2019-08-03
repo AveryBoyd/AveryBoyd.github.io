@@ -64,7 +64,7 @@
             visibility: hidden;
             position: absolute;
             text-align: center;
-            width: 150px;
+            width: 160px;
             background: white;
             border: 1px;
             border-color: black;
@@ -188,10 +188,10 @@
                             .style("top", (d3.event.pageY) + "px")
                             .html("<span><b>Year: " + d.year + "</b></span><br/>"
                                     + "<span style='color: black'>Top 5%: " + d.top5 + "</span><br/>"
-                                    + "<span style='color: blue'>Fourth: " + d.fourth + "</span><br/>"
-                                    + "<span style='color: green'>Third: " + d.third + "</span><br/>"
-                                    + "<span style='color: orange'>Second: " + d.second + "</span><br/>"
-                                    + "<span style='color: red'>First: " + d.first + "</span><br/>"
+                                    + "<span style='color: blue'>Top 25%: " + d.fourth + "</span><br/>"
+                                    + "<span style='color: green'>Top 50-25%: " + d.third + "</span><br/>"
+                                    + "<span style='color: orange'>Bottom 50-25%: " + d.second + "</span><br/>"
+                                    + "<span style='color: red'>Bottom 25%: " + d.first + "</span><br/>"
                             );
                         d3.selectAll(".circle" + d.year).style("visibility", "visible");
                         
