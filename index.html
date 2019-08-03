@@ -3,67 +3,143 @@
         <script src="https://d3js.org/d3.v4.min.js"></script>
     </head>
     <style>
-        .line {
+        .top5line {
           fill: none;
-          stroke: steelblue;
+          stroke: black;
+          stroke-width: 2px;
+        }
+        .fourthLine {
+          fill: none;
+          stroke: blue;
+          stroke-width: 2px;
+        }
+        .thirdLine {
+          fill: none;
+          stroke: green;
+          stroke-width: 2px;
+        }
+        .secondLine {
+          fill: none;
+          stroke: orange;
+          stroke-width: 2px;
+        }
+        .firstLine {
+          fill: none;
+          stroke: red;
           stroke-width: 2px;
         }
     </style>
     <body>
+        <button>Next</button>
         <script>
+            var margin = {top: 20, right: 20, bottom: 30, left: 50},
+                width = 960 - margin.left - margin.right,
+                height = 500 - margin.top - margin.bottom;
 
-        // set the dimensions and margins of the graph
-        var margin = {top: 20, right: 20, bottom: 30, left: 50},
-            width = 960 - margin.left - margin.right,
-            height = 500 - margin.top - margin.bottom;
+            var x = d3.scaleLinear().range([0, width]);
+            var y = d3.scaleLinear().range([height, 0]);
 
-        // parse the date / time
-        var parseTime = d3.timeParse("%d-%b-%y");
+            var top5Line = d3.line()
+                .x(function(d) { console.log(d); return x(d.year); })
+                .y(function(d) { return y(d.top5); });
 
-        // set the ranges
-        var x = d3.scaleTime().range([0, width]);
-        var y = d3.scaleLinear().range([height, 0]);
+            var fourthLine = d3.line()
+                .x(function(d) { return x(d.year); })
+                .y(function(d) { return y(d.fourth); });
 
-        // define the line
-        var valueline = d3.line()
-            .x(function(d) { return x(d.date); })
-            .y(function(d) { return y(d.close); });
+            var thirdLine = d3.line()
+                .x(function(d) { return x(d.year); })
+                .y(function(d) { return y(d.third); });
 
-        // append the svg obgect to the body of the page
-        // appends a 'group' element to 'svg'
-        // moves the 'group' element to the top left margin
-        var svg = d3.select("body").append("svg")
-            .attr("width", width + margin.left + margin.right)
-            .attr("height", height + margin.top + margin.bottom)
-          .append("g")
-            .attr("transform",
-                  "translate(" + margin.left + "," + margin.top + ")");
+            var secondLine = d3.line()
+                .x(function(d) { return x(d.year); })
+                .y(function(d) { return y(d.second); });
 
-        // Get the data
-        d3.csv("data.csv", function(error, data) {
-          if (error) throw error;
+            var firstLine = d3.line()
+                .x(function(d) { return x(d.year); })
+                .y(function(d) { return y(d.first); });
 
-          // Scale the range of the data
-          x.domain(d3.extent(data, function(d) { return d.year; }));
-          y.domain([0, d3.max(data, function(d) { return d.top5; })]);
+            var svg = d3.select("body").append("svg")
+                .attr("width", width + margin.left + margin.right)
+                .attr("height", height + margin.top + margin.bottom)
+                .append("g")
+                .attr("transform",
+                      "translate(" + margin.left + "," + margin.top + ")");
 
-          // Add the valueline path.
-          svg.append("path")
-              .data([data])
-              .attr("class", "line")
-              .attr("d", valueline);
+            var sceneYear;
+            var yearIncrement = 17;
 
-          // Add the X Axis
-          svg.append("g")
-              .attr("transform", "translate(0," + height + ")")
-              .call(d3.axisBottom(x));
+            function AddDataToChart(data) {
+              console.log(data);
+              svg.append("path")
+                  .data([data])
+                  .attr("class", "top5Line")
+                  .attr("d", top5Line);
 
-          // Add the Y Axis
-          svg.append("g")
-              .call(d3.axisLeft(y));
+              svg.append("path")
+                  .data([data])
+                  .attr("class", "fourthLine")
+                  .attr("d", fourthLine);
 
-        });
+              svg.append("path")
+                  .data([data])
+                  .attr("class", "thirdLine")
+                  .attr("d", thirdLine);
 
+              svg.append("path")
+                  .data([data])
+                  .attr("class", "secondLine")
+                  .attr("d", secondLine);
+
+              svg.append("path")
+                  .data([data])
+                  .attr("class", "firstLine")
+                  .attr("d", firstLine);
+            }
+
+            function ShowNextDataPoint(data, endYear) {
+                setTimeout(function() {
+                    nextSceneYear = sceneYear + 1;
+                    AddDataToChart(data.filter(d => d.year >= sceneYear && d.year <= nextSceneYear ));
+                    sceneYear = nextSceneYear;
+                    if (sceneYear < endYear) {
+                        ShowNextDataPoint(data, endYear);
+                    }
+                }, 50);
+            }
+
+            d3.csv("https://averyboyd.github.io/data.csv", function(error, data) {
+                if (error) throw error;
+
+                data.forEach(function(d) {
+                    d.year = +d.year;
+                    d.first = +d.first;
+                    d.second = +d.second;
+                    d.third = +d.third;
+                    d.fourth = +d.fourth;
+                    d.top5 = +d.top5;
+                });
+
+                var firstYear = d3.min(data, function(d) { return d.year; });
+                var lastYear = d3.max(data, function(d) { return d.year; });
+
+                sceneYear = firstYear;
+
+                d3.select("button").on("click", function() {
+                    endYear = sceneYear + yearIncrement;
+                    ShowNextDataPoint(data, endYear);
+                });
+
+                x.domain([firstYear, lastYear]);
+                y.domain([0, d3.max(data, function(d) { return d.top5; })]);
+
+                svg.append("g")
+                    .attr("transform", "translate(0," + height + ")")
+                    .call(d3.axisBottom(x).tickFormat(d3.format("d")));
+
+                svg.append("g")
+                    .call(d3.axisLeft(y));
+            });
         </script>
     </body>
 </html>
